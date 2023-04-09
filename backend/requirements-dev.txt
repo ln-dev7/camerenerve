@@ -1,0 +1,6 @@
+requests
+black
+pytest
+pytest-mock
+isort
+flake8

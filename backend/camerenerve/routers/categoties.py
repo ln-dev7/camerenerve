@@ -1,16 +1,19 @@
 from typing import List
-from datetime import datetime
-from sqlalchemy.orm import Session
-from camerenerve.dependencies import get_db
-from camerenerve.schemas.categories import Category as CategorySchema, CategoryCreate
-from camerenerve.models import Category as CategoryModel
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from camerenerve.dependencies import get_db
+from camerenerve.models import Category as CategoryModel
+from camerenerve.schemas.categories import Category as CategorySchema
+from camerenerve.schemas.categories import CategoryCreate
 
 router = APIRouter(
     prefix="/categories",
     tags=["categories"],
     responses={404: {"description": "Not found"}},
 )
+
 
 @router.get(
     "/",
@@ -47,5 +50,5 @@ def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_category)
         return db_category.to_dict()
-    except:
-        raise HTTPException(status_code=500, detail="Server Error!")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Server Error {exc}!")

@@ -1,15 +1,20 @@
 from typing import List
-from sqlalchemy.orm import Session
-from camerenerve.dependencies import get_db
-from camerenerve.schemas.messages import Message as MessageSchema, MessageCreate
-from camerenerve.models import Category as CategoryModel, Message as MessageModel
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from camerenerve.dependencies import get_db
+from camerenerve.models import Category as CategoryModel
+from camerenerve.models import Message as MessageModel
+from camerenerve.schemas.messages import Message as MessageSchema
+from camerenerve.schemas.messages import MessageCreate
 
 router = APIRouter(
     prefix="/messages",
     tags=["messages"],
     responses={404: {"description": "Not found"}},
 )
+
 
 @router.get(
     "/",
@@ -32,7 +37,7 @@ def get_message(message_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Message Not Found!")
     else:
         return message.to_dict()
-    
+
 
 @router.get(
     "/category/{category_id}",
@@ -60,5 +65,5 @@ def create_message(message: MessageCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_message)
         return db_message.to_dict()
-    except:
-        raise HTTPException(status_code=500, detail="Server Error!")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Server Error {exc}!")
