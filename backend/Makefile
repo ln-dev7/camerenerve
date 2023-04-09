@@ -44,12 +44,14 @@ lint: install-dev-deps venv
 	$(PYTHON) -m flake8 camerenerve --show-source --statistics --ignore=F821,E402
 
 ##test: test your code
-test: install-dev-deps lint
+test:
 	$(PYTHON) -m pytest tests
 
 ##clean: clean the virtualenv
 clean:
 	rm -rf $(VENVPATH)
+	rm -rf */__pycache__
+	rm -rf */*/__pycache__
 
 ##help: show help
 help : Makefile
