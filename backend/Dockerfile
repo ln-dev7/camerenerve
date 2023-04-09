@@ -11,4 +11,4 @@ COPY camerenerve camerenerve
 
 EXPOSE 8000
 
-CMD ["uvicorn", "onacut.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "camerenerve.server:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
