@@ -1,4 +1,3 @@
-from typing import Union
 from pydantic import BaseModel
 
 
@@ -12,7 +11,7 @@ class MessageCreate(MessageBase):
 
 class Message(MessageBase):
     id: int
-    category: str
+    category_id: str
     created_at: str
 
     class Config:
