@@ -12,7 +12,6 @@ export type Icon = LucideIcon
 export const Icons = {
   sun: SunMedium,
   moon: Moon,
-  laptop: Laptop,
   twitter: Twitter,
   logo: (props: LucideProps) => (
     <svg
@@ -22,6 +21,7 @@ export const Icons = {
       stroke-width="1.5"
       stroke="currentColor"
       className="w-6 h-6"
+      {...props}
     >
       <path
         stroke-linecap="round"

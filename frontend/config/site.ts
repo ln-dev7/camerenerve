@@ -1,23 +1,16 @@
-import { NavItem } from "@/types/nav"
+export type SiteConfig = typeof siteConfig
 
-interface SiteConfig {
-  name: string
-  description: string
-  mainNav: NavItem[]
-  links: {
-    twitter: string
-    github: string
-    docs: string
-  }
-}
-
-export const siteConfig: SiteConfig = {
+export const siteConfig = {
   name: "Camereverve",
   description: "What annoys people in Cameroon",
   mainNav: [
     {
       title: "Home",
       href: "/",
+    },
+    {
+      title: "Messages",
+      href: "/messages",
     },
   ],
   links: {
