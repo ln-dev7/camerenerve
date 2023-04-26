@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-from camerenerve.routers.categoties import router as categories_router
+from camerenerve.routers.categories import router as categories_router
 from camerenerve.routers.messages import router as messages_router
 
 app = FastAPI(docs_url="/")
