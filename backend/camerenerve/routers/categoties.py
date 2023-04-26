@@ -45,6 +45,9 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 )
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     try:
+        category_exists = db.query(CategoryModel).filter_by(name=category.name).first()
+        if category_exists:
+            raise HTTPException(status_code=400, detail="Category already exists")
         db_category = CategoryModel(**category.dict())
         db.add(db_category)
         db.commit()
