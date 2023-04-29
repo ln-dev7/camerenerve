@@ -1,3 +1,3 @@
 # Camerenerve
 
-Camerenerve is a small app where camerouninans can express their feeling about some companies in Cameroun.
+Camerenerve is a small app in which Cameroonians can express their feelings about some companies in Cameroon.
