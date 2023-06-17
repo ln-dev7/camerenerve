@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from camerenerve.dependencies import get_db
@@ -21,8 +21,12 @@ router = APIRouter(
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
-def read_messages(db: Session = Depends(get_db)):
-    messages = db.query(MessageModel).all()
+def read_messages(
+        db: Session = Depends(get_db),
+        page: int = Query(0, ge=0),
+        limit: int = Query(10, ge=10)
+    ):
+    messages = db.query(MessageModel).limit(limit).offset(limit*page)
     return list(map(lambda mess: mess.to_dict(), messages))
 
 

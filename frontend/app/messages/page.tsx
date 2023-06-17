@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-
+import { useQuery } from "react-query";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,98 +35,21 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import FilterTags from "@/components/filter-tags"
 import SearchBar from "@/components/search-bar"
+import { getMessages } from "@/api/messages"
+import { getCategories } from "@/api/categories"
+import moment from "moment";
 
 export default function IndexMessages() {
-  const messages = [
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-  ]
+  const {
+    isLoading: isMessagesLoading,
+    isError: IsMessagesError,
+    data: messages
+  } = useQuery("messages", getMessages);
+  const {
+    isLoading: isCategoriesLoading,
+    isError: IsCategoriesError,
+    data: categories
+  } = useQuery("categories", getCategories);
   return (
     <div className="flex flex-col gap-8  pt-6 pb-8 md:py-10">
       <section className="container flex flex-col items-center gap-6">
@@ -146,14 +69,26 @@ export default function IndexMessages() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Ajouter un message</AlertDialogTitle>
                 <AlertDialogDescription>
-                  L'ajout d'un message se fait complètement anonymement.
+                  L&apos;ajout d&apos;un message se fait complètement anonymement.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <form>
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="title">Titre</Label>
-                    <Input id="title" placeholder="Titre du message" />
+                    <Label htmlFor="tag">Choix du tag</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select" />
+                        <SelectContent position="popper">
+                          <SelectItem value="0">Tout</SelectItem>
+                          {
+                            categories?.map((category) =>(
+                              <SelectItem value={`${category.id}`}>{category.name}</SelectItem>
+                            ))
+                          }
+                        </SelectContent>
+                      </SelectTrigger>
+                    </Select>
                   </div>
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="description">Description</Label>
@@ -161,20 +96,6 @@ export default function IndexMessages() {
                       id="description"
                       placeholder="Description du message"
                     />
-                  </div>
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="tag">Choix du tag</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                        <SelectContent position="popper">
-                          <SelectItem value="all">Tout</SelectItem>
-                          <SelectItem value="energie">Energie</SelectItem>
-                          <SelectItem value="eau">Eau</SelectItem>
-                          <SelectItem value="connexion">Connexion</SelectItem>
-                        </SelectContent>
-                      </SelectTrigger>
-                    </Select>
                   </div>
                 </div>
               </form>
@@ -188,17 +109,16 @@ export default function IndexMessages() {
       </section>
       <section className="container">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-          {messages.map((message) => (
+          {messages?.map((message) => (
             <Card className="hover:shadow-md transition-all duration-300 ease-in-out hover:cursor-pointer">
               <CardHeader>
-                <CardTitle>{message.title}</CardTitle>
-                <CardDescription>{message.description}</CardDescription>
+                <CardDescription>{message.text}</CardDescription>
               </CardHeader>
               <CardContent>
-                <Badge variant="outline">{message.tag}</Badge>
+                <Badge variant="outline">{message.category}</Badge>
               </CardContent>
               <CardFooter>
-                <p>{message.date}</p>
+                <p>{moment(message.created_at).fromNow()}</p>
               </CardFooter>
             </Card>
           ))}
