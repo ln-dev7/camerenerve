@@ -11,7 +11,7 @@ class MessageCreate(MessageBase):
 
 class Message(MessageBase):
     id: int
-    category_id: str
+    category: str
     created_at: str
 
     class Config:

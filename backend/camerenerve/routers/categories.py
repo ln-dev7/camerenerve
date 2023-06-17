@@ -33,7 +33,7 @@ def read_categories(db: Session = Depends(get_db)):
 def get_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(CategoryModel).filter_by(id=category_id).first()
     if not category:
-        raise HTTPException(status_code=404, detail="Category Not Found!")
+        raise HTTPException(404, "Category Not Found!")
     else:
         return category.to_dict()
 
@@ -45,13 +45,13 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 )
 def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     try:
-        category_exists = db.query(CategoryModel).filter_by(name=category.name).first()
-        if category_exists:
-            raise HTTPException(status_code=400, detail="Category already exists")
+        cat = db.query(CategoryModel).filter_by(name=category.name).first()
+        if cat:
+            raise HTTPException(400, "Category already exists")
         db_category = CategoryModel(**category.dict())
         db.add(db_category)
         db.commit()
         db.refresh(db_category)
         return db_category.to_dict()
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Server Error {exc}!")
+        raise HTTPException(500, f"Server Error {exc}!")

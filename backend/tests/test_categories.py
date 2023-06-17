@@ -1,33 +1,31 @@
-import json
-
-from fastapi.testclient import TestClient
-import pytest
-from pytest_mock import MockerFixture
-
-from camerenerve.server import app
-from tests.conftest import SessionLocal
-
-@pytest.fixture
-def test_db_session():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+from tests import client
 
 
-@pytest.fixture
-def test_client():
-    return TestClient(app)
-
-
-def test_create_category(test_client: MockerFixture):
+def test_create_category(random_name):
     # Given
-    category_data = {"name": "New Category"}
+    category_data = {"name": random_name}
 
     # When
-    response = test_client.post("/categories/", json=category_data)
+    response = client.post("/categories/", json=category_data)
 
     # Then
     assert response.status_code == 200
-    assert response.json()["name"] == "New Category"
+    assert response.json()["name"] == random_name
+
+
+def test_create_category_already_exist(random_name):
+    # Given
+    category_data = {"name": random_name}
+
+    # When
+    response = client.post("/categories/", json=category_data)
+
+    # Then
+    assert response.status_code == 200
+    assert response.json()["name"] == random_name
+
+    # try to recreate a category with the same name
+    response = client.post("/categories/", json=category_data)
+
+    # Then error code 500 shoud be drop
+    assert response.status_code == 500

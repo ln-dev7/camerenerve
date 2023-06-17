@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-
+import { useQuery } from "react-query";
 import { siteConfig } from "@/config/site"
 import { buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-
+import moment from "moment";
 import {
   Card,
   CardContent,
@@ -14,34 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getMessages } from "@/api/messages"
 
 export default function IndexPage() {
-  const messages = [
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-    {
-      id: Math.random(),
-      title: "Les coupures d'électricité",
-      description:
-        "Les coupures d'électricité sont de plus en plus fréquentes dans mon quartier. C'est vraiment énervant.",
-      tag: "Energie",
-      date: "2021-10-01",
-    },
-  ]
+  const {
+    isLoading,
+    isError,
+    data: messages
+  } = useQuery("messages", getMessages);
+
   return (
     <>
       <section className="container grid items-center justify-center gap-6 pt-6 pb-8 md:py-10">
@@ -73,17 +54,17 @@ export default function IndexPage() {
             Derniers messages publiés
           </h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-            {messages.map((message) => (
+            {messages?.slice(0,3).map((message) => (
               <Card>
                 <CardHeader>
                   <CardTitle>{message.title}</CardTitle>
-                  <CardDescription>{message.description}</CardDescription>
+                  <CardDescription>{message.text}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Badge variant="outline">{message.tag}</Badge>
+                  <Badge variant="outline">{message.category}</Badge>
                 </CardContent>
                 <CardFooter>
-                  <p>{message.date}</p>
+                  <p>{moment(message.created_at).fromNow()}</p>
                 </CardFooter>
               </Card>
             ))}
