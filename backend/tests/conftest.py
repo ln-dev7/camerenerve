@@ -1,6 +1,7 @@
 import contextlib
 import os
 from uuid import uuid4
+import random
 
 import pytest
 from pytest_mock import MockerFixture
@@ -43,10 +44,23 @@ def session_local(mocker: MockerFixture):
 def random_name() -> str:
     return str(uuid4())
 
+@pytest.fixture
+def random_text() -> str:
+    return " ".join([str(uuid4()) for _ in range(random.randint(1,6))])
+
 
 @pytest.fixture
 def category_id(random_name: str) -> int:
-    response_district = client.post(
+    response = client.post(
         "/categories/", json={"name": random_name}
     )
-    return response_district.json()["id"]
+    return response.json()["id"]
+
+
+@pytest.fixture
+def message_id(category_id, random_text) -> int:
+    response = client.post(
+        "/messages/",
+        json={"category_id": category_id, "text": random_text}
+    )
+    return response.json()["id"]
