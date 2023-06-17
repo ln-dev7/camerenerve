@@ -22,11 +22,11 @@ router = APIRouter(
     responses={403: {"description": "Operation forbidden"}},
 )
 def read_messages(
-        db: Session = Depends(get_db),
-        page: int = Query(0, ge=0),
-        limit: int = Query(10, ge=10)
-    ):
-    messages = db.query(MessageModel).limit(limit).offset(limit*page)
+    db: Session = Depends(get_db),
+    page: int = Query(0, ge=0),
+    limit: int = Query(10, ge=10),
+):
+    messages = db.query(MessageModel).limit(limit).offset(limit * page)
     return list(map(lambda mess: mess.to_dict(), messages))
 
 
@@ -38,7 +38,7 @@ def read_messages(
 def get_message(message_id: int, db: Session = Depends(get_db)):
     message = db.query(MessageModel).filter_by(id=message_id).first()
     if not message:
-        raise HTTPException(status_code=404, detail="Message Not Found!")
+        raise HTTPException(404, "Message Not Found!")
     else:
         return message.to_dict()
 
@@ -61,7 +61,7 @@ def get_message_by_category(category_id: int, db: Session = Depends(get_db)):
 def create_message(message: MessageCreate, db: Session = Depends(get_db)):
     category: CategoryModel = db.query(CategoryModel).get(message.category_id)
     if not category:
-        raise HTTPException(status_code=404, detail="Category Not Found!")
+        raise HTTPException(404, "Message Not Found!")
 
     try:
         db_message = MessageModel(**message.dict())
@@ -70,4 +70,4 @@ def create_message(message: MessageCreate, db: Session = Depends(get_db)):
         db.refresh(db_message)
         return db_message.to_dict()
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Server Error {exc}!")
+        raise HTTPException(500, f"Server Error {exc}!")

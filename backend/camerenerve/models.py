@@ -19,10 +19,10 @@ class Message(Base, BaseModel):
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     def to_dict(self):
-        return{
+        return {
             "id": self.id,
             "text": self.text,
             "category_id": self.category_id,
             "category": self.category.name,
-            "created_at": self.created_at
+            "created_at": self.created_at,
         }
