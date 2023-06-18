@@ -19,11 +19,7 @@ import { CardsLoader } from "@/components/cards-loader"
 import formatDateTime from "@/utils/formatDateTime"
 
 export default function IndexPage() {
-  const {
-    isLoading,
-    isError,
-    data: messages,
-  } = useQuery("messages", getMessages)
+  const { isLoading, isError, data: messages } = useQuery("messages", getMessages)
 
   return (
     <>
