@@ -13,7 +13,7 @@ import {
 export default function FilterTags() {
   return (
     <Select>
-      <SelectTrigger className="w-full sm:w-[180px] shrink-0">
+      <SelectTrigger className="w-full shrink-0 sm:w-[180px]">
         <SelectValue placeholder="Filtre par tag" />
       </SelectTrigger>
       <SelectContent>

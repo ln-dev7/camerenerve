@@ -10,10 +10,10 @@ import { Separator } from "./ui/separator"
 
 export function SiteFooter() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header className="bg-background sticky top-0 z-40 w-full border-b">
       <Separator />
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Tout droits réservés © {new Date().getFullYear()} CamerEnerve
         </p>
       </div>
