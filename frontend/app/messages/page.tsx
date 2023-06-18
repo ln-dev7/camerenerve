@@ -3,8 +3,11 @@
 import Link from "next/link"
 import { getCategories } from "@/api/categories"
 import { getMessages } from "@/api/messages"
+import { zodResolver } from "@hookform/resolvers/zod"
 import moment from "moment"
+import { useForm } from "react-hook-form"
 import { useQuery } from "react-query"
+import * as z from "zod"
 
 import {
   AlertDialog,
@@ -37,9 +40,30 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/components/ui/use-toast"
 import { CardsLoader } from "@/components/cards-loader"
 import FilterTags from "@/components/filter-tags"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/react-hook-form/form"
 import SearchBar from "@/components/search-bar"
+
+const FormSchema = z.object({
+  message: z.string({
+    required_error: "Veuillez écrire un message",
+  }).min(100, {
+    message: "Votre message doit dépasser 100 caractère",
+  }),
+  categorie: z.string({
+    required_error: "Veuillez choisir une catégorie",
+  }),
+})
 
 export default function IndexMessages() {
   const {
@@ -52,6 +76,15 @@ export default function IndexMessages() {
     isError: IsCategoriesError,
     data: categories,
   } = useQuery("categories", getCategories)
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
+
+  function onSubmit(data) {
+    const { message, categorie } = data
+    console.log("add message", data)
+  }
   return (
     <div className="flex flex-col gap-8  pt-6 pb-8 md:py-10">
       <section className="container flex flex-col items-center gap-6">
@@ -75,37 +108,62 @@ export default function IndexMessages() {
                   anonymement.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <form>
-                <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="tag">Choix du tag</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                        <SelectContent position="popper">
-                          <SelectItem value="0">Tout</SelectItem>
-                          {categories?.map((category) => (
-                            <SelectItem value={`${category.id}`}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </SelectTrigger>
-                    </Select>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="w-full space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Message</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            id="description"
+                            placeholder="Contenu du message"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="categorie"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Choix de la catégorie</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choisissez la catégorie de votre message" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="0">Autres</SelectItem>
+                            {categories?.map((category) => (
+                              <SelectItem value={`${category.id}`}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="w-full flex items-center justify-end gap-4">
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <Button type="submit">Submit</Button>
                   </div>
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Description du message"
-                    />
-                  </div>
-                </div>
-              </form>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                <AlertDialogAction>Ajouter</AlertDialogAction>
-              </AlertDialogFooter>
+                </form>
+              </Form>
             </AlertDialogContent>
           </AlertDialog>
         </div>
