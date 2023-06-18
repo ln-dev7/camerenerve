@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, DateTime, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -21,7 +21,7 @@ Base = declarative_base()
 class BaseModel:
     id = Column(Integer, primary_key=True)
     created_at = Column(
-        String, default=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        DateTime, default=datetime.utcnow
     )  # type:ignore
 
     def to_dict(self, skipkeys=[]):
