@@ -12,6 +12,18 @@ def test_get_single_message_bad_id():
     assert response.status_code == 404
 
 
+def test_get_messages():
+    response = client.get(f"/messages")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list) == True
+
+
+def test_message_by_categories(category_id):
+    response = client.get(f"/messages/category/{category_id}")
+    assert response.status_code == 200
+    assert isinstance(response.json(), list) == True
+
+
 def test_create_message(category_id, random_text):
     message_data = {
         "category_id": category_id,
