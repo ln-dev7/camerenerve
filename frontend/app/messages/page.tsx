@@ -129,7 +129,7 @@ export default function IndexMessages() {
 
   return (
     <div className="flex flex-col gap-4 pt-6 pb-8 md:py-6">
-      <section className="sticky top-4 bg-white dark:bg-gray-950 border-b pb-2 lg:pb-4">
+      <section className="z-30 sticky top-4 bg-white dark:bg-gray-950 border-b pb-2 lg:pb-4">
         <div className="container flex flex-col items-center gap-6">
           <h1 className="text-2xl font-extrabold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
             Messages <br className="hidden sm:inline" />
