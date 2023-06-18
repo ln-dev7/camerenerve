@@ -63,8 +63,8 @@ const FormSchema = z.object({
     .string({
       required_error: "Veuillez écrire un message",
     })
-    .min(100, {
-      message: "Votre message doit dépasser 100 caractère",
+    .min(20, {
+      message: "Votre message doit dépasser 20 caractères",
     }),
   categorie: z.string({
     required_error: "Veuillez choisir une catégorie",
