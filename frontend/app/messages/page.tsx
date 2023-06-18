@@ -1,12 +1,15 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { getCategories } from "@/api/categories"
-import { getMessages } from "@/api/messages"
+import { getMessages, postMessages } from "@/api/messages"
+import formatDateTime from "@/utils/formatDateTime"
 import { zodResolver } from "@hookform/resolvers/zod"
-import moment from "moment"
+import { Loader2, Plus } from "lucide-react"
 import { useForm } from "react-hook-form"
-import { useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import * as z from "zod"
 
 import {
@@ -40,7 +43,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { toast, useToast } from "@/components/ui/use-toast"
 import { CardsLoader } from "@/components/cards-loader"
 import FilterTags from "@/components/filter-tags"
 import {
@@ -55,17 +59,21 @@ import {
 import SearchBar from "@/components/search-bar"
 
 const FormSchema = z.object({
-  message: z.string({
-    required_error: "Veuillez écrire un message",
-  }).min(100, {
-    message: "Votre message doit dépasser 100 caractère",
-  }),
+  message: z
+    .string({
+      required_error: "Veuillez écrire un message",
+    })
+    .min(100, {
+      message: "Votre message doit dépasser 100 caractère",
+    }),
   categorie: z.string({
     required_error: "Veuillez choisir une catégorie",
   }),
 })
 
 export default function IndexMessages() {
+  const { toast } = useToast()
+
   const {
     isLoading: isMessagesLoading,
     isError: IsMessagesError,
@@ -76,96 +84,150 @@ export default function IndexMessages() {
     isError: IsCategoriesError,
     data: categories,
   } = useQuery("categories", getCategories)
+  const [openAddDialog, setOpenAddDialog] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data) {
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation(
+    (data: { message: string; categorie: string }) =>
+      postMessages(data.categorie, data.message),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("messages") // Invalide le cache de la requête "messages"
+      },
+    }
+  )
+
+  async function onSubmit(data: { message: string; categorie: string }) {
     const { message, categorie } = data
-    console.log("add message", data)
+
+    try {
+      await mutation.mutateAsync({ message, categorie })
+      form.reset()
+      setOpenAddDialog(false)
+      toast({
+        title: "Votre message a été ajouté avec succès",
+        description: "Merci pour votre contribution",
+        action: <ToastAction altText="Okay">Okay</ToastAction>,
+      })
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Votre message n'a pas pu être ajouté",
+        description: "Veuillez réessayer plus tard",
+        action: <ToastAction altText="Okay">Okay</ToastAction>,
+      })
+    } finally {
+      form.reset()
+      setOpenAddDialog(false)
+    }
   }
+
   return (
-    <div className="flex flex-col gap-8  pt-6 pb-8 md:py-10">
-      <section className="container flex flex-col items-center gap-6">
-        <h1 className="text-2xl font-extrabold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
-          Messages <br className="hidden sm:inline" />
-        </h1>
-        <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
-          <FilterTags />
-          <SearchBar />
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button className="w-full sm:w-fit shrink-0">
-                Ajouter un message
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Ajouter un message</AlertDialogTitle>
-                <AlertDialogDescription>
-                  L&apos;ajout d&apos;un message se fait complètement
-                  anonymement.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-full space-y-6"
-                >
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            id="description"
-                            placeholder="Contenu du message"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="categorie"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Choix de la catégorie</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
+    <div className="flex flex-col gap-4 pt-6 pb-8 md:py-6">
+      <section className="sticky top-4 bg-white dark:bg-gray-950 border-b pb-2 lg:pb-4">
+        <div className="container flex flex-col items-center gap-6">
+          <h1 className="text-2xl font-extrabold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
+            Messages <br className="hidden sm:inline" />
+          </h1>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
+            <FilterTags />
+            <div className="w-full flex items-center gap-2">
+              <SearchBar />
+              <AlertDialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    className="w-fit shrink-0"
+                    onClick={() => setOpenAddDialog(true)}
+                  >
+                    <Plus className="sm:hidden h-4 w-4" />
+                    <span className="hidden sm:flex">Ajouter un message</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Ajouter un message</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      L&apos;ajout d&apos;un message se fait complètement
+                      anonymement.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <Form {...form}>
+                    <form className="w-full space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Message</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                id="description"
+                                placeholder="Contenu du message"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="categorie"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Choix de la catégorie</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Choisissez la catégorie de votre message" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="0">Autres</SelectItem>
+                                {categories?.map((category) => (
+                                  <SelectItem value={`${category.id}`}>
+                                    {category.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="w-full flex items-center justify-end gap-4">
+                        <AlertDialogCancel className="mt-0">
+                          Annuler
+                        </AlertDialogCancel>
+                        <Button
+                          type="submit"
+                          disabled={mutation.isLoading}
+                          onClick={
+                            !mutation.isLoading
+                              ? form.handleSubmit(onSubmit)
+                              : undefined
+                          }
                         >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Choisissez la catégorie de votre message" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="0">Autres</SelectItem>
-                            {categories?.map((category) => (
-                              <SelectItem value={`${category.id}`}>
-                                {category.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="w-full flex items-center justify-end gap-4">
-                    <AlertDialogCancel>Annuler</AlertDialogCancel>
-                    <Button type="submit">Submit</Button>
-                  </div>
-                </form>
-              </Form>
-            </AlertDialogContent>
-          </AlertDialog>
+                          {mutation.isLoading && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          )}
+                          Ajouter
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -176,21 +238,30 @@ export default function IndexMessages() {
           </div>
         ) : null}
         {messages ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-            {messages.map((message) => (
-              <Card className="hover:shadow-md transition-all duration-300 ease-in-out hover:cursor-pointer">
-                <CardHeader>
-                  <CardDescription>{message.text}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Badge variant="outline">{message.category}</Badge>
-                </CardContent>
-                <CardFooter>
-                  <p>{moment(message.created_at).fromNow()}</p>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          <ResponsiveMasonry
+            columnsCountBreakPoints={{
+              779: 1,
+              780: 2,
+              1120: 3,
+            }}
+            className="w-full"
+          >
+            <Masonry gutter="1rem">
+              {messages.map((message) => (
+                <Card className="hover:shadow-md transition-all duration-300 ease-in-out hover:cursor-pointer">
+                  <CardHeader>
+                    <CardDescription>{message.text}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Badge variant="outline">{message.category}</Badge>
+                  </CardContent>
+                  <CardFooter>
+                    <p>{formatDateTime(message.created_at)}</p>
+                  </CardFooter>
+                </Card>
+              ))}
+            </Masonry>
+          </ResponsiveMasonry>
         ) : null}
         {IsMessagesError ? (
           <div className="w-full flex items-center justify-center py-4">

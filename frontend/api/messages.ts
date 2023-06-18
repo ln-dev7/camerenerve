@@ -1,9 +1,9 @@
 export const getMessages = async () => {
-  const messages = await (await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/messages`)).json();
+  const messages = await (await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/messages?limit=200`)).json();
   return messages;
 }
 
-export const postMessages = async (category_id, message) => {
+export const postMessages = async (category_id, message: string) => {
   try{
     const resp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/messages`,{
       method: 'POST',

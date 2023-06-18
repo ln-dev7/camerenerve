@@ -2,9 +2,8 @@
 
 import Link from "next/link"
 import { getMessages } from "@/api/messages"
-import moment from "moment"
 import { useQuery } from "react-query"
-
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
 import { siteConfig } from "@/config/site"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
@@ -17,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { CardsLoader } from "@/components/cards-loader"
+import formatDateTime from "@/utils/formatDateTime"
 
 export default function IndexPage() {
   const {
@@ -62,22 +62,31 @@ export default function IndexPage() {
           ) : null}
           {messages ? (
             <>
-              <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
-                {messages.slice(0, 3).map((message) => (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{message.title}</CardTitle>
-                      <CardDescription>{message.text}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Badge variant="outline">{message.category}</Badge>
-                    </CardContent>
-                    <CardFooter>
-                      <p>{moment(message.created_at).fromNow()}</p>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
+              <ResponsiveMasonry
+                columnsCountBreakPoints={{
+                  779: 1,
+                  780: 2,
+                  1120: 3,
+                }}
+                className="w-full"
+              >
+                <Masonry gutter="1rem">
+                  {messages.slice(0, 3).map((message) => (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{message.title}</CardTitle>
+                        <CardDescription>{message.text}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Badge variant="outline">{message.category}</Badge>
+                      </CardContent>
+                      <CardFooter>
+                        <p>{formatDateTime(message.created_at)}</p>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </Masonry>
+              </ResponsiveMasonry>
               <Link
                 href="/messages"
                 className="text-sm font-bold text-blue-500 hover:text-blue-700"
@@ -88,7 +97,9 @@ export default function IndexPage() {
           ) : null}
           {isError ? (
             <div className="w-full flex items-center justify-center py-4">
-              <p className="text-lg">Une erreur est survenue, Veuillez reessayer plus tard</p>
+              <p className="text-lg">
+                Une erreur est survenue, Veuillez réessayer plus tard
+              </p>
             </div>
           ) : null}
         </div>
