@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig
 
 export const siteConfig = {
-  name: "Camereverve",
+  name: "Camerenerve",
   description: "What annoys people in Cameroon",
   mainNav: [
     {
