@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
@@ -71,7 +71,7 @@ def get_message_by_category(
 
 
 @router.post(
-    "/",
+    "",
     response_model=MessageSchema,
     responses={403: {"description": "Operation forbidden"}},
 )

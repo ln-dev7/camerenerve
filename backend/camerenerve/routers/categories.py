@@ -16,7 +16,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[CategorySchema],
     responses={403: {"description": "Operation forbidden"}},
 )
@@ -39,7 +39,7 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
 
 
 @router.post(
-    "/",
+    "",
     response_model=CategorySchema,
     responses={403: {"description": "Operation forbidden"}},
 )
