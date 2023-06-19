@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
@@ -26,7 +26,14 @@ def read_messages(
     page: int = Query(0, ge=0),
     limit: int = Query(10, ge=10),
 ):
-    messages = db.query(MessageModel).limit(limit).offset(limit * page)
+    messages = (
+        db.query(MessageModel)
+        .order_by(
+            MessageModel.created_at.desc(),
+        )
+        .limit(limit)
+        .offset(limit * page)
+    )
     return list(map(lambda mess: mess.to_dict(), messages))
 
 
@@ -48,13 +55,23 @@ def get_message(message_id: int, db: Session = Depends(get_db)):
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
-def get_message_by_category(category_id: int, db: Session = Depends(get_db)):
-    messages = db.query(MessageModel).filter_by(category_id=category_id).all()
+def get_message_by_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+    page: int = Query(0, ge=0),
+    limit: int = Query(10, ge=10),
+):
+    messages = (
+        db.query(MessageModel)
+        .filter_by(category_id=category_id)
+        .limit(limit)
+        .offset(limit * page)
+    )
     return list(map(lambda mess: mess.to_dict(), messages))
 
 
 @router.post(
-    "/",
+    "",
     response_model=MessageSchema,
     responses={403: {"description": "Operation forbidden"}},
 )

@@ -1,8 +1,8 @@
-FROM python:3.10-slim
+FROM python:3.7-slim
 
 WORKDIR /app
 
-COPY data.sqlite requirements.txt Makefile .env ./
+COPY requirements.txt Makefile ./
 
 RUN pip install -U pip && \
     pip install --no-cache-dir -r requirements.txt

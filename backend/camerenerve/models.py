@@ -11,6 +11,14 @@ class Category(Base, BaseModel):
     description = Column(Text)
     messages = relationship("Message", backref="category", lazy=True)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
 
 class Message(Base, BaseModel):
     __tablename__ = "messages"
@@ -24,5 +32,5 @@ class Message(Base, BaseModel):
             "text": self.text,
             "category_id": self.category_id,
             "category": self.category.name,
-            "created_at": self.created_at,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         }

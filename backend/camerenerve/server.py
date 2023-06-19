@@ -7,7 +7,7 @@ load_dotenv()
 from camerenerve.routers.categories import router as categories_router
 from camerenerve.routers.messages import router as messages_router
 
-app = FastAPI(docs_url="/")
+app = FastAPI(docs_url="/docs")
 app.include_router(categories_router)
 app.include_router(messages_router)
 
@@ -18,3 +18,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+def index():
+    return {"msg": "Hello Camerenerve API"}

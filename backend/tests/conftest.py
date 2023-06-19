@@ -52,7 +52,7 @@ def random_text() -> str:
 @pytest.fixture
 def category_id(random_name: str) -> int:
     response = client.post(
-        "/categories/", json={"name": random_name}
+        "/categories", json={"name": random_name}
     )
     return response.json()["id"]
 
@@ -60,7 +60,7 @@ def category_id(random_name: str) -> int:
 @pytest.fixture
 def message_id(category_id, random_text) -> int:
     response = client.post(
-        "/messages/",
+        "/messages",
         json={"category_id": category_id, "text": random_text}
     )
     return response.json()["id"]
