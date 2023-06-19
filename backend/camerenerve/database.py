@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, DateTime, create_engine
+from sqlalchemy import Column, DateTime, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -20,9 +20,7 @@ Base = declarative_base()
 
 class BaseModel:
     id = Column(Integer, primary_key=True)
-    created_at = Column(
-        DateTime, default=datetime.utcnow
-    )  # type:ignore
+    created_at = Column(DateTime, default=datetime.utcnow)  # type:ignore
 
     def to_dict(self, skipkeys=[]):
         return {k: v for k, v in self.__dict__.items() if k not in skipkeys}

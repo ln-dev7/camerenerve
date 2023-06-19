@@ -64,6 +64,9 @@ def get_message_by_category(
     messages = (
         db.query(MessageModel)
         .filter_by(category_id=category_id)
+        .order_by(
+            MessageModel.created_at.desc(),
+        )
         .limit(limit)
         .offset(limit * page)
     )
