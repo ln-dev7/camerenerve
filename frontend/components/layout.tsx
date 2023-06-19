@@ -1,10 +1,8 @@
+import { PropsWithChildren } from "react"
+
 import { SiteHeader } from "@/components/site-header"
 
-interface LayoutProps {
-  children: React.ReactNode
-}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <SiteHeader />

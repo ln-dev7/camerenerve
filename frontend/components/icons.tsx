@@ -20,7 +20,7 @@ export const Icons = {
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
-      className="w-6 h-6"
+      className="h-6 w-6"
       {...props}
     >
       <path

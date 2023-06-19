@@ -128,15 +128,15 @@ export default function IndexMessages() {
   }
 
   return (
-    <div className="flex flex-col gap-4 pt-6 pb-8 md:py-6">
-      <section className="z-30 sticky top-4 bg-white dark:bg-gray-950 border-b pb-2 lg:pb-4">
+    <div className="flex flex-col gap-4 pb-8 pt-6 md:py-6">
+      <section className="sticky top-4 z-30 border-b bg-white pb-2 dark:bg-gray-950 lg:pb-4">
         <div className="container flex flex-col items-center gap-6">
           <h1 className="text-2xl font-extrabold leading-tight tracking-tighter sm:text-2xl md:text-3xl lg:text-4xl">
             Messages <br className="hidden sm:inline" />
           </h1>
-          <div className="flex flex-col sm:flex-row items-center gap-2 w-full">
+          <div className="flex w-full flex-col items-center gap-2 sm:flex-row">
             <FilterTags />
-            <div className="w-full flex items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <SearchBar />
               <AlertDialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
                 <AlertDialogTrigger asChild>
@@ -144,7 +144,7 @@ export default function IndexMessages() {
                     className="w-fit shrink-0"
                     onClick={() => setOpenAddDialog(true)}
                   >
-                    <Plus className="sm:hidden h-4 w-4" />
+                    <Plus className="h-4 w-4 sm:hidden" />
                     <span className="hidden sm:flex">Ajouter un message</span>
                   </Button>
                 </AlertDialogTrigger>
@@ -203,7 +203,7 @@ export default function IndexMessages() {
                           </FormItem>
                         )}
                       />
-                      <div className="w-full flex items-center justify-end gap-4">
+                      <div className="flex w-full items-center justify-end gap-4">
                         <AlertDialogCancel className="mt-0">
                           Annuler
                         </AlertDialogCancel>
@@ -248,7 +248,7 @@ export default function IndexMessages() {
           >
             <Masonry gutter="1rem">
               {messages.map((message) => (
-                <Card className="hover:shadow-md transition-all duration-300 ease-in-out hover:cursor-pointer">
+                <Card className="transition-all duration-300 ease-in-out hover:cursor-pointer hover:shadow-md">
                   <CardHeader>
                     <CardDescription>{message.text}</CardDescription>
                   </CardHeader>
@@ -264,7 +264,7 @@ export default function IndexMessages() {
           </ResponsiveMasonry>
         ) : null}
         {IsMessagesError ? (
-          <div className="w-full flex items-center justify-center py-4">
+          <div className="flex w-full items-center justify-center py-4">
             <p className="text-lg">
               Une erreur est survenue, Veuillez reessayer plus tard
             </p>
