@@ -32,5 +32,5 @@ class Message(Base, BaseModel):
             "text": self.text,
             "category_id": self.category_id,
             "category": self.category.name,
-            "created_at": self.created_at.strftime("%d/%m/%Y %H:%M:%S"),
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         }
