@@ -16,7 +16,7 @@ class Category(Base, BaseModel):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "created_at": self.created_at.strftime("%d/%m/%Y %H:%M:%S"),
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         }
 
 
