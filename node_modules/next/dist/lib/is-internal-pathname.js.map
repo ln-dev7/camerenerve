@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../src/lib/is-internal-pathname.ts"],"names":["isInternalPathname","pathname","startsWith"],"mappings":";;;;+BAAgBA;;;eAAAA;;;AAAT,SAASA,mBAAmBC,QAAgB,EAAW;IAC5D,OAAOA,SAASC,UAAU,CAAC;AAC7B"}
