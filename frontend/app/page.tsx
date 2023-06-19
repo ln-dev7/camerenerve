@@ -33,7 +33,7 @@ export default function IndexPage() {
           <h1 className="text-3xl font-extrabold leading-tight tracking-tighter sm:text-3xl md:text-5xl lg:text-6xl">
             CamerEnerve <br className="hidden sm:inline" />
           </h1>
-          <p className="text-muted-foreground max-w-[700px] text-center text-lg sm:text-xl">
+          <p className="max-w-[700px] text-center text-lg text-muted-foreground sm:text-xl">
             Tout en restant anonyme, venez nous dire ce qui vous énerve au 237
           </p>
         </div>
