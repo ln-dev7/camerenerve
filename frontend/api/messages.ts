@@ -1,5 +1,5 @@
 export const getMessages = async () => {
-  const messages = await (await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/messages?limit=200`)).json();
+  const messages = await (await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/messages/?limit=20`)).json();
   return messages;
 }
 
