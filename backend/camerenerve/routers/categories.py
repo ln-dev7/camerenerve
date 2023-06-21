@@ -20,7 +20,7 @@ router = APIRouter(
     response_model=List[CategorySchema],
     responses={403: {"description": "Operation forbidden"}},
 )
-def read_categories(db: Session = Depends(get_db)):
+async def read_categories(db: Session = Depends(get_db)):
     categories = db.query(CategoryModel).all()
     return list(map(lambda cat: cat.to_dict(), categories))
 
@@ -30,7 +30,7 @@ def read_categories(db: Session = Depends(get_db)):
     response_model=CategorySchema,
     responses={403: {"description": "Operation forbidden"}},
 )
-def get_category(category_id: int, db: Session = Depends(get_db)):
+async def get_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(CategoryModel).filter_by(id=category_id).first()
     if not category:
         raise HTTPException(404, "Category Not Found!")
@@ -43,7 +43,7 @@ def get_category(category_id: int, db: Session = Depends(get_db)):
     response_model=CategorySchema,
     responses={403: {"description": "Operation forbidden"}},
 )
-def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+async def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     try:
         cat = db.query(CategoryModel).filter_by(name=category.name).first()
         if cat:
