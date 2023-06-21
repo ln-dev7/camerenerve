@@ -41,7 +41,7 @@ docker-run: docker-build
 lint: install-dev-deps venv
 	$(PYTHON) -m black camerenerve
 	$(PYTHON) -m isort camerenerve
-	$(PYTHON) -m flake8 camerenerve --show-source --statistics --ignore=F821,E402
+	$(PYTHON) -m flake8 camerenerve --show-source --statistics --ignore=F821,E402 --max-line-length=100
 
 ##test: test your code
 test:
