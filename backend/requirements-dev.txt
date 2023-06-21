@@ -4,3 +4,5 @@ pytest
 pytest-mock
 isort
 flake8
+httpx
+trio

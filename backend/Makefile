@@ -44,7 +44,7 @@ lint: install-dev-deps venv
 	$(PYTHON) -m flake8 camerenerve --show-source --statistics --ignore=F821,E402 --max-line-length=100
 
 ##test: test your code
-test:
+test: install-dev-deps venv
 	$(PYTHON) -m pytest tests
 
 ##clean: clean the virtualenv
