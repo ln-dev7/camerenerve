@@ -21,10 +21,10 @@ router = APIRouter(
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
-def read_messages(
-    db: Session = Depends(get_db),
+async def read_messages(
     page: int = Query(0, ge=0),
     limit: int = Query(10, ge=10),
+    db: Session = Depends(get_db)
 ):
     messages = (
         db.query(MessageModel)
@@ -42,7 +42,7 @@ def read_messages(
     response_model=MessageSchema,
     responses={403: {"description": "Operation forbidden"}},
 )
-def get_message(message_id: int, db: Session = Depends(get_db)):
+async def get_message(message_id: int, db: Session = Depends(get_db)):
     message = db.query(MessageModel).filter_by(id=message_id).first()
     if not message:
         raise HTTPException(404, "Message Not Found!")
@@ -55,11 +55,11 @@ def get_message(message_id: int, db: Session = Depends(get_db)):
     response_model=List[MessageSchema],
     responses={403: {"description": "Operation forbidden"}},
 )
-def get_message_by_category(
+async def get_message_by_category(
     category_id: int,
-    db: Session = Depends(get_db),
     page: int = Query(0, ge=0),
     limit: int = Query(10, ge=10),
+    db: Session = Depends(get_db)
 ):
     messages = (
         db.query(MessageModel)
@@ -78,7 +78,7 @@ def get_message_by_category(
     response_model=MessageSchema,
     responses={403: {"description": "Operation forbidden"}},
 )
-def create_message(message: MessageCreate, db: Session = Depends(get_db)):
+async def create_message(message: MessageCreate, db: Session = Depends(get_db)):
     category: CategoryModel = db.query(CategoryModel).get(message.category_id)
     if not category:
         raise HTTPException(404, "Message Not Found!")

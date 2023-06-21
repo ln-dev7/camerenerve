@@ -21,5 +21,5 @@ app.add_middleware(
 
 
 @app.get("/")
-def index():
+async def index():
     return {"msg": "Hello Camerenerve API"}
