@@ -1,0 +1,20 @@
+# Generic single-database configuration.
+
+
+## create revision
+
+```console
+alembic revision -m "revision name"
+```
+
+## creation auto generated revision
+
+``` console
+alembic revision --autogenerate -m "revision name"
+```
+
+## apply last revision
+
+```console
+alembic upgrade head
+```
