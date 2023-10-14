@@ -1,9 +1,15 @@
 import os
+from pathlib import Path
 from datetime import datetime
 
+from dotenv import load_dotenv
 from sqlalchemy import Column, DateTime, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+
+ENV_FILE_PATH = Path(__file__).parent.parent / Path(".env")
+load_dotenv(ENV_FILE_PATH)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///data.sqlite")
 

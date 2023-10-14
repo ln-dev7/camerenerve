@@ -8,7 +8,7 @@ def main():
     parser.add_argument(
         "command",
         type=str,
-        choices=["init", "reset"]
+        choices=["init", "reset", "clear"]
     )
 
     command = parser.parse_args().command
@@ -22,6 +22,10 @@ def main():
     if command == "reset":
         meta.drop_all()
         meta.create_all()
+        session.commit()
+
+    if command == "clear":
+        meta.drop_all()
         session.commit()
 
 
