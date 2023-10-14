@@ -1,7 +1,8 @@
 import { API_BASE_ENDPOINT } from "@/api/constants"
 
 export const getMessages = async () => {
-  const messages = await (await fetch(`${API_BASE_ENDPOINT}/messages/?limit=20`)).json();
+  // const messages = await (await fetch(`${API_BASE_ENDPOINT}/messages/?limit=20`)).json();
+  const messages = await (await fetch(`${API_BASE_ENDPOINT}/messages`)).json();
   return messages;
 }
 
