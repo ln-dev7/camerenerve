@@ -1,4 +1,8 @@
+import { API_BASE_ENDPOINT } from "@/api/constants"
+
 export const getCategories = async () => {
-  const categories = await (await fetch(`${process.env.NEXT_PUBLIC_API_BASE_ENDPOINT}/categories`)).json();
-  return categories;
+  const categories = await (
+    await fetch(`${API_BASE_ENDPOINT}/categories`)
+  ).json()
+  return categories
 }
