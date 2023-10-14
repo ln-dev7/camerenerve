@@ -24,7 +24,7 @@ router = APIRouter(
 async def read_messages(
     page: int = Query(0, ge=0),
     limit: int = Query(10, ge=10),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     messages = (
         db.query(MessageModel)
@@ -59,7 +59,7 @@ async def get_message_by_category(
     category_id: int,
     page: int = Query(0, ge=0),
     limit: int = Query(10, ge=10),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     messages = (
         db.query(MessageModel)
